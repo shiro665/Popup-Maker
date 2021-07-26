@@ -496,14 +496,14 @@ class PUM_Admin_Templates {
 						'name'  => "",
 						'type'  => 'checkbox',
 						'std'   => true,
-						'label' => __( 'Prevent popup from showing to visitor again using a cookie?', 'popup-maker' ),
+						'label' => __( 'Prevent popup from showing to visitor again using a cookie', 'popup-maker' ),
 						'meta'  => array('checked' => 'checked')
 					),
 					'popup_trigger_add_cookie_event' => array(
 						'id'           => 'popup_trigger_add_cookie_event',
 						'name'         => "",
 						'type'         => 'select',
-						'label'        => __( 'Stop showing popup once visitor takes this action:', 'popup-maker' ),
+						'label'        => __( 'Stop showing popup once visitor takes this action', 'popup-maker' ),
 						'options'      => PUM_Cookies::instance()->dropdown_list(),
 						'dependencies' => array(
 							'popup_trigger_add_cookie' => true,

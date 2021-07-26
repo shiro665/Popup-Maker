@@ -329,7 +329,7 @@ class PUM_Triggers {
 			'pum_trigger_cookie_field',
 			array(
 				'label'    => __( 'Cookie Name', 'popup-maker' ),
-				'desc'     => __( 'Choose which cookies will disable this trigger?', 'popup-maker' ),
+				'desc'     => __( 'Choose which cookies will disable this trigger', 'popup-maker' ),
 				'type'     => 'select',
 				'multiple' => true,
 				'as_array' => true,
