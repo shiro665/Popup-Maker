@@ -312,7 +312,8 @@
 				menuItems.forEach((mi) => {
 					mi.addEventListener(
 					  "click",
-					  (evt) => {
+					  //(evt) => {
+					  function(evt) {
 						if (!evt.target.hasAttribute("href")) return;
 						sessionStorage.setItem(
 							`${popupId}-active-tab`, 
@@ -325,12 +326,20 @@
 						const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
 
 						if ( selHorzItem ) {
+							// Make the saved horizontal tab active.
 							console.log( `[PUM] selHorzItem = ${selHorzItem}` );
 							$( '.horizontal-tabs > ul.tabs .tab' ).removeClass( 'active' );
 							$( `a[href="${selHorzItem}"]` )
-								.closest('li.tab').click();
+								.closest( 'li.tab' ).click();
 							$( `a[href="${selHorzItem}"]` )
-								.closest('li.tab').addClass( 'active' );
+								.closest( 'li.tab' ).addClass( 'active' );
+						} else {
+							// If no horizontal tab saved, make the first tab active by default.
+							let $this = $( this ),
+                				$container = $this.parents( '.pum-tabs-container:first' );
+							$container
+								.find( '.horizontal-tabs > ul.tabs > li.tab:first-child' )
+								.addClass('active');
 						}
 
 						// Set up the horizontal tab listeners.
@@ -383,6 +392,7 @@
 				const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
 
 				// Horizontal tabs.
+				// TO DO: Refactor because it's duplicated above.
 				if ( selHorzItem ) {
 					console.log( `[PUM] selHorzItem = ${selHorzItem}` );
 					// TO DO: See if can avoid calling multiple selectors.
