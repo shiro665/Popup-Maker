@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2020, Code Atlantic LLC
  ******************************************************************************/
-( function( $ ) {
+ ( function( $ ) {
 	'use strict';
 
 	window.PUM_Admin = window.PUM_Admin || {};
@@ -292,6 +292,106 @@
 						}
 					}
 				} );
+
+				// || Remembering the tabs
+				//
+				// TO DO: Need to convert all to jQuery and refactor big time.
+
+				console.log( '[DEBUG] Popup Settings: Remembering the active tab item ...' );
+  
+				const menuItemsSelector = ".pum-tabs-container.pum-tabbed-form.vertical-tabs > ul.tabs .tab",
+				  menuItems = document.querySelectorAll( menuItemsSelector ),
+				  popupId = $( '#popup-id' ).data( 'popup-id' );
+				  
+				if ( !menuItems.length ) {
+					console.log( '[DEBUG] Popup Settings: No tab items found!' );
+					return;
+				}
+
+				// TO DO: Convert to jQuery.
+				menuItems.forEach((mi) => {
+					mi.addEventListener(
+					  "click",
+					  (evt) => {
+						if (!evt.target.hasAttribute("href")) return;
+						sessionStorage.setItem(
+							`${popupId}-active-tab`, 
+							evt.target.getAttribute("href")
+						);
+
+						// See if there's a horizontal tab saved for this.
+						// TO DO: This is duplicate code so refactor it.
+						const currHorzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
+						const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
+
+						if ( selHorzItem ) {
+							console.log( `[PUM] selHorzItem = ${selHorzItem}` );
+							$( '.horizontal-tabs > ul.tabs .tab' ).removeClass( 'active' );
+							$( `a[href="${selHorzItem}"]` )
+								.closest('li.tab').click();
+							$( `a[href="${selHorzItem}"]` )
+								.closest('li.tab').addClass( 'active' );
+						}
+
+						// Set up the horizontal tab listeners.
+						const tabCount = $( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).data( 'tab-count' );
+						console.log(`[PUM] tabCount = ${tabCount}`);
+
+						if ( tabCount > 1 ) {
+							const horzTabs = $( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' );
+							console.log('[PUM] horzTabs = ', horzTabs);
+							const horzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
+							horzTabs.click(
+								(evt) => {
+									if (!evt.target.hasAttribute("href")) return;
+									sessionStorage.setItem(
+										`${popupId}-active-horz-tab_${horzTabName}`, 
+										evt.target.getAttribute("href")
+									);
+								}
+							); // Listener
+						} // if
+					  },
+					  false
+					); // Listener
+				}); // forEach
+				
+			    if (!sessionStorage.length) return;
+
+				// If tabs were saved in session storage, then display them
+				// if needed.
+
+			    const selMenuItem = sessionStorage.getItem(`${popupId}-active-tab`);
+				const currHorzTabName = selMenuItem.split( '_' )[1];
+				console.log(`currHorzTabName = ${currHorzTabName}`);
+
+				// Vertical tabs.
+			    if (selMenuItem) {
+				  // TO DO: Convert to jQuery.
+				  const mi = document
+				  	.querySelector(`${menuItemsSelector} > a[href="${selMenuItem}"`);
+				  if ( !mi ) {
+				    console.log( '[DEBUG] Popup Settings: Active tab item not found!');
+					return;
+				  } // if
+				  //mi.scrollIntoView();
+				  mi.click(); // Go to the section.
+				  //mi.focus();
+				  mi.classList.add("active"); // Highlight
+				} // if
+
+				const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
+
+				// Horizontal tabs.
+				if ( selHorzItem ) {
+					console.log( `[PUM] selHorzItem = ${selHorzItem}` );
+					// TO DO: See if can avoid calling multiple selectors.
+					$( '.horizontal-tabs > ul.tabs .tab' ).removeClass( 'active' );
+					$( `a[href="${selHorzItem}"]` )
+						.closest('li.tab').click();
+					$( `a[href="${selHorzItem}"]` )
+						.closest('li.tab').addClass( 'active' );
+				}
 		} );
 } )( jQuery );
 
