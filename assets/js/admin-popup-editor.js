@@ -301,14 +301,15 @@
   
 				const menuItemsSelector = ".pum-tabs-container.pum-tabbed-form.vertical-tabs > ul.tabs .tab",
 				  menuItems = document.querySelectorAll( menuItemsSelector ),
-				  popupId = $( '#popup-id' ).data( 'popup-id' );
+				  popupId = document.querySelector( '#popup-id' ).dataset.popupId;
+				  
+				console.log( `[DEBUG] Popup ID: ${popupId}` );
 				  
 				if ( !menuItems.length ) {
 					console.log( '[DEBUG] Popup Settings: No tab items found!' );
 					return;
 				}
 
-				// TO DO: Convert to jQuery.
 				menuItems.forEach((mi) => {
 					mi.addEventListener(
 					  "click",
@@ -330,15 +331,11 @@
 							console.log( `[PUM] selHorzItem = ${selHorzItem}` );
 
 							document.querySelector( '.horizontal-tabs > ul.tabs .tab' ).classList.remove( 'active' );
-
-							$( `a[href="${selHorzItem}"]` )
-								.closest( 'li.tab' ).click(); // jQuery
-
+							document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).click();
 							document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).classList.add( 'active' );
-
 						} else {
 							// If no horizontal tab saved, make the first tab active by default.
-							let $this = $( this ),
+							let $this = $( this ), // jQuery
                 				$container = $this.parents( '.pum-tabs-container:first' );
 							$container
 								.find( '.horizontal-tabs > ul.tabs > li.tab:first-child' )
@@ -346,11 +343,11 @@
 						}
 
 						// Set up the horizontal tab listeners.
-						const tabCount = $( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).data( 'tab-count' );
+						const tabCount = $( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).data( 'tab-count' ); // jQuery
 						console.log(`[PUM] tabCount = ${tabCount}`);
 
 						if ( tabCount > 1 ) {
-							const horzTabs = $( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' );
+							const horzTabs = $( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' ); // jQuery
 							console.log('[PUM] horzTabs = ', horzTabs);
 							const horzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
 							horzTabs.click(
@@ -376,7 +373,7 @@
 			    const selMenuItem = sessionStorage.getItem(`${popupId}-active-tab`);
 				if (!selMenuItem) return;
 				const currHorzTabName = selMenuItem.split( '_' )[1];
-				console.log(`currHorzTabName = ${currHorzTabName}`);
+				console.log(`[PUM] currHorzTabName = ${currHorzTabName}`);
 
 				// Vertical tabs.
 			    if (selMenuItem) {
