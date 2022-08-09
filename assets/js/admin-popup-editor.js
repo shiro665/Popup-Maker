@@ -293,9 +293,9 @@
 					}
 				} );
 
-				// || Remembering the tabs
+				// || Remembering the tabs ("sticky" tabs)
 				//
-				// TO DO: Need to convert all to jQuery and refactor big time.
+				// TO DO: Need to convert all to vanilla JavaScript and refactor big time.
 
 				console.log( '[DEBUG] Popup Settings: Remembering the active tab item ...' );
   
@@ -328,11 +328,14 @@
 						if ( selHorzItem ) {
 							// Make the saved horizontal tab active.
 							console.log( `[PUM] selHorzItem = ${selHorzItem}` );
-							$( '.horizontal-tabs > ul.tabs .tab' ).removeClass( 'active' );
+
+							document.querySelector( '.horizontal-tabs > ul.tabs .tab' ).classList.remove( 'active' );
+
 							$( `a[href="${selHorzItem}"]` )
-								.closest( 'li.tab' ).click();
-							$( `a[href="${selHorzItem}"]` )
-								.closest( 'li.tab' ).addClass( 'active' );
+								.closest( 'li.tab' ).click(); // jQuery
+
+							document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).classList.add( 'active' );
+
 						} else {
 							// If no horizontal tab saved, make the first tab active by default.
 							let $this = $( this ),
@@ -371,6 +374,7 @@
 				// if needed.
 
 			    const selMenuItem = sessionStorage.getItem(`${popupId}-active-tab`);
+				if (!selMenuItem) return;
 				const currHorzTabName = selMenuItem.split( '_' )[1];
 				console.log(`currHorzTabName = ${currHorzTabName}`);
 
