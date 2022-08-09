@@ -297,6 +297,12 @@
 				//
 				// TO DO: Need to convert all to vanilla JavaScript and refactor big time.
 
+				function makeHorizTabActive( selHorzItem ) {
+					document.querySelector( '.horizontal-tabs > ul.tabs .tab' ).classList.remove( 'active' );
+					document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).click();
+					document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).classList.add( 'active' );
+				}
+
 				console.log( '[DEBUG] Popup Settings: Remembering the active tab item ...' );
   
 				const menuItemsSelector = ".pum-tabs-container.pum-tabbed-form.vertical-tabs > ul.tabs .tab",
@@ -322,7 +328,6 @@
 						);
 
 						// See if there's a horizontal tab saved for this.
-						// TO DO: This is duplicate code so refactor it.
 						const currHorzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
 						const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
 
@@ -330,9 +335,8 @@
 							// Make the saved horizontal tab active.
 							console.log( `[PUM] selHorzItem = ${selHorzItem}` );
 
-							document.querySelector( '.horizontal-tabs > ul.tabs .tab' ).classList.remove( 'active' );
-							document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).click();
-							document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).classList.add( 'active' );
+							makeHorizTabActive( selHorzItem );
+
 						} else {
 							// If no horizontal tab saved, make the first tab active by default.
 							let $this = $( this ), // jQuery
@@ -393,15 +397,9 @@
 				const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
 
 				// Horizontal tabs.
-				// TO DO: Refactor because it's duplicated above.
 				if ( selHorzItem ) {
 					console.log( `[PUM] selHorzItem = ${selHorzItem}` );
-					// TO DO: See if can avoid calling multiple selectors.
-					$( '.horizontal-tabs > ul.tabs .tab' ).removeClass( 'active' );
-					$( `a[href="${selHorzItem}"]` )
-						.closest('li.tab').click();
-					$( `a[href="${selHorzItem}"]` )
-						.closest('li.tab').addClass( 'active' );
+					makeHorizTabActive( selHorzItem );
 				}
 		} );
 } )( jQuery );
