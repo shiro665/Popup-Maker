@@ -297,6 +297,24 @@
 				//
 				// TO DO: Need to convert all to vanilla JavaScript and refactor big time.
 
+				// Because vanilla JS doesn't have a parents() function like jQuery does.
+				function getParents(el, parentSelector) {
+					if (parentSelector === undefined) {
+						parentSelector = document;
+					}
+					let parents = [];
+					let p = el.parentNode;
+					console.log('[DEBUG p = ', p);
+					console.log('[DEBUG parentSelector = ', parentSelector);
+					while (p !== parentSelector) {
+						let o = p;
+						parents.push(o);
+						p = o.parentNode;
+					}
+					parents.push(parentSelector);
+					return parents;
+				}
+				
 				function makeHorizTabActive( selHorzItem ) {
 					document.querySelector( '.horizontal-tabs > ul.tabs .tab' ).classList.remove( 'active' );
 					document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).click();
@@ -339,30 +357,45 @@
 
 						} else {
 							// If no horizontal tab saved, make the first tab active by default.
-							let $this = $( this ), // jQuery
-                				$container = $this.parents( '.pum-tabs-container:first' );
-							$container
-								.find( '.horizontal-tabs > ul.tabs > li.tab:first-child' )
-								.addClass('active');
+							//let $this = $( this ), // jQuery
+                			//	$container = $this.parents( '.pum-tabs-container:first' );
+
+							const parentDiv = document.querySelector('.pum-tabs-container');
+							const parents = getParents(this, parentDiv);
+
+							//$container
+							//	.find( '.horizontal-tabs > ul.tabs > li.tab:first-child' )
+							//	.addClass('active'); // jQuery
+
+							parents[parents.length-1].querySelector('.horizontal-tabs > ul.tabs > li.tab:first-child').classList.add('active');
 						}
 
 						// Set up the horizontal tab listeners.
-						const tabCount = $( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).data( 'tab-count' ); // jQuery
+						//const tabCount = $( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).data( 'tab-count' ); // jQuery
+
+						const tabCount = document.querySelector( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).dataset.tabCount;
+
 						console.log(`[PUM] tabCount = ${tabCount}`);
 
 						if ( tabCount > 1 ) {
-							const horzTabs = $( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' ); // jQuery
+							//const horzTabs = $( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' ); // jQuery
+							
+							const horzTabs = document.querySelectorAll( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' );
+
 							console.log('[PUM] horzTabs = ', horzTabs);
+
 							const horzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
-							horzTabs.click(
-								(evt) => {
-									if (!evt.target.hasAttribute("href")) return;
-									sessionStorage.setItem(
-										`${popupId}-active-horz-tab_${horzTabName}`, 
-										evt.target.getAttribute("href")
-									);
-								}
-							); // Listener
+							horzTabs.forEach( ( el )  => {
+								addEventListener( 'click',
+									(evt) => {
+										if (!evt.target.hasAttribute("href")) return;
+										sessionStorage.setItem(
+											`${popupId}-active-horz-tab_${horzTabName}`, 
+											evt.target.getAttribute("href")
+										);
+									}
+								); // Listener
+							}); // forEach
 						} // if
 					  },
 					  false
@@ -377,11 +410,11 @@
 			    const selMenuItem = sessionStorage.getItem(`${popupId}-active-tab`);
 				if (!selMenuItem) return;
 				const currHorzTabName = selMenuItem.split( '_' )[1];
+
 				console.log(`[PUM] currHorzTabName = ${currHorzTabName}`);
 
 				// Vertical tabs.
 			    if (selMenuItem) {
-				  // TO DO: Convert to jQuery.
 				  const mi = document
 				  	.querySelector(`${menuItemsSelector} > a[href="${selMenuItem}"`);
 				  if ( !mi ) {
