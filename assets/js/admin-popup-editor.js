@@ -321,119 +321,125 @@
 					document.querySelector( `a[href="${selHorzItem}"]` ).closest( 'li.tab' ).classList.add( 'active' );
 				}
 
-				console.log( '[DEBUG] Popup Settings: Remembering the active tab item ...' );
-  
-				const menuItemsSelector = ".pum-tabs-container.pum-tabbed-form.vertical-tabs > ul.tabs .tab",
-				  menuItems = document.querySelectorAll( menuItemsSelector ),
-				  popupId = document.querySelector( '#popup-id' ).dataset.popupId;
-				  
-				console.log( `[DEBUG] Popup ID: ${popupId}` );
-				  
-				if ( !menuItems.length ) {
-					console.log( '[DEBUG] Popup Settings: No tab items found!' );
-					return;
-				}
+				function makeTabsSticky() {
 
-				menuItems.forEach((mi) => {
-					mi.addEventListener(
-					  "click",
-					  //(evt) => {
-					  function(evt) {
-						if (!evt.target.hasAttribute("href")) return;
-						sessionStorage.setItem(
-							`${popupId}-active-tab`, 
-							evt.target.getAttribute("href")
-						);
+					console.log( '[DEBUG] Popup Settings: Remembering the active tab item ...' );
+					
+					const menuItemsSelector = ".pum-tabs-container.pum-tabbed-form.vertical-tabs > ul.tabs .tab",
+					  menuItems = document.querySelectorAll( menuItemsSelector ),
+					  popupId = document.querySelector( '#popup-id' ).dataset.popupId;
+					
+					console.log( `[DEBUG] Popup ID: ${popupId}` );
+					
+					if ( !menuItems.length ) {
+						console.log( '[DEBUG] Popup Settings: No tab items found!' );
+						return;
+					}
 
-						// See if there's a horizontal tab saved for this.
-						const currHorzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
-						const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
+					menuItems.forEach((mi) => {
+						mi.addEventListener(
+						  "click",
+						  //(evt) => {
+						  function(evt) {
+							if (!evt.target.hasAttribute("href")) return;
+							sessionStorage.setItem(
+								`${popupId}-active-tab`, 
+								evt.target.getAttribute("href")
+							);
 
-						if ( selHorzItem ) {
-							// Make the saved horizontal tab active.
-							console.log( `[PUM] selHorzItem = ${selHorzItem}` );
+							// See if there's a horizontal tab saved for this.
+							const currHorzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
+							const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
 
-							makeHorizTabActive( selHorzItem );
+							if ( selHorzItem ) {
+								// Make the saved horizontal tab active.
+								console.log( `[PUM] selHorzItem = ${selHorzItem}` );
 
-						} else {
-							// If no horizontal tab saved, make the first tab active by default.
-							//let $this = $( this ), // jQuery
-                			//	$container = $this.parents( '.pum-tabs-container:first' );
+								makeHorizTabActive( selHorzItem );
 
-							const parentDiv = document.querySelector('.pum-tabs-container');
-							const parents = getParents(this, parentDiv);
+							} else {
+								// If no horizontal tab saved, make the first tab active by default.
+								//let $this = $( this ), // jQuery
+                				//	$container = $this.parents( '.pum-tabs-container:first' );
 
-							//$container
-							//	.find( '.horizontal-tabs > ul.tabs > li.tab:first-child' )
-							//	.addClass('active'); // jQuery
+								const parentDiv = document.querySelector('.pum-tabs-container');
+								const parents = getParents(this, parentDiv);
 
-							parents[parents.length-1].querySelector('.horizontal-tabs > ul.tabs > li.tab:first-child').classList.add('active');
-						}
+								//$container
+								//	.find( '.horizontal-tabs > ul.tabs > li.tab:first-child' )
+								//	.addClass('active'); // jQuery
 
-						// Set up the horizontal tab listeners.
-						//const tabCount = $( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).data( 'tab-count' ); // jQuery
+								parents[parents.length-1].querySelector('.horizontal-tabs > ul.tabs > li.tab:first-child').classList.add('active');
+							}
 
-						const tabCount = document.querySelector( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).dataset.tabCount;
+							// Set up the horizontal tab listeners.
+							//const tabCount = $( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).data( 'tab-count' ); // jQuery
 
-						console.log(`[PUM] tabCount = ${tabCount}`);
+							const tabCount = document.querySelector( evt.target.getAttribute( "href" ) + ` .horizontal-tabs` ).dataset.tabCount;
 
-						if ( tabCount > 1 ) {
-							//const horzTabs = $( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' ); // jQuery
-							
-							const horzTabs = document.querySelectorAll( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' );
+							console.log(`[PUM] tabCount = ${tabCount}`);
 
-							console.log('[PUM] horzTabs = ', horzTabs);
+							if ( tabCount > 1 ) {
+								//const horzTabs = $( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' ); // jQuery
 
-							const horzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
-							horzTabs.forEach( ( el )  => {
-								addEventListener( 'click',
-									(evt) => {
-										if (!evt.target.hasAttribute("href")) return;
-										sessionStorage.setItem(
-											`${popupId}-active-horz-tab_${horzTabName}`, 
-											evt.target.getAttribute("href")
-										);
-									}
-								); // Listener
-							}); // forEach
-						} // if
-					  },
-					  false
-					); // Listener
-				}); // forEach
-				
-			    if (!sessionStorage.length) return;
+								const horzTabs = document.querySelectorAll( evt.target.getAttribute( "href" ) + ' .horizontal-tabs > ul.tabs .tab' );
 
-				// If tabs were saved in session storage, then display them
-				// if needed.
+								console.log('[PUM] horzTabs = ', horzTabs);
 
-			    const selMenuItem = sessionStorage.getItem(`${popupId}-active-tab`);
-				if (!selMenuItem) return;
-				const currHorzTabName = selMenuItem.split( '_' )[1];
+								const horzTabName = evt.target.getAttribute( "href" ).split( '_' )[1];
+								horzTabs.forEach( ( el )  => {
+									el.addEventListener( 'click',
+										//(evt) => {
+										function(evt) {
+											if (!evt.target.hasAttribute("href")) return;
+											sessionStorage.setItem(
+												`${popupId}-active-horz-tab_${horzTabName}`, 
+												evt.target.getAttribute("href")
+											);
+										}
+									); // Listener
+								}); // forEach
+							} // if
+						  },
+						  false
+						); // Listener
+					}); // forEach
 
-				console.log(`[PUM] currHorzTabName = ${currHorzTabName}`);
+			    	if (!sessionStorage.length) return;
 
-				// Vertical tabs.
-			    if (selMenuItem) {
-				  const mi = document
-				  	.querySelector(`${menuItemsSelector} > a[href="${selMenuItem}"`);
-				  if ( !mi ) {
-				    console.log( '[DEBUG] Popup Settings: Active tab item not found!');
-					return;
-				  } // if
-				  //mi.scrollIntoView();
-				  mi.click(); // Go to the section.
-				  //mi.focus();
-				  mi.classList.add("active"); // Highlight
-				} // if
+					// If tabs were saved in session storage, then display them
+					// if needed.
 
-				const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
+			    	const selMenuItem = sessionStorage.getItem(`${popupId}-active-tab`);
+					if (!selMenuItem) return;
+					const currHorzTabName = selMenuItem.split( '_' )[1];
 
-				// Horizontal tabs.
-				if ( selHorzItem ) {
-					console.log( `[PUM] selHorzItem = ${selHorzItem}` );
-					makeHorizTabActive( selHorzItem );
-				}
+					console.log(`[PUM] currHorzTabName = ${currHorzTabName}`);
+
+					// Vertical tabs.
+			    	if (selMenuItem) {
+					  const mi = document
+					  	.querySelector(`${menuItemsSelector} > a[href="${selMenuItem}"`);
+					  if ( !mi ) {
+					    console.log( '[DEBUG] Popup Settings: Active tab item not found!');
+						return;
+					  } // if
+					  //mi.scrollIntoView();
+					  mi.click(); // Go to the section.
+					  //mi.focus();
+					  mi.classList.add("active"); // Highlight
+					} // if
+
+					const selHorzItem = sessionStorage.getItem(`${popupId}-active-horz-tab_${currHorzTabName}`);
+
+					// Horizontal tabs.
+					if ( selHorzItem ) {
+						console.log( `[PUM] selHorzItem = ${selHorzItem}` );
+						makeHorizTabActive( selHorzItem );
+					}
+				} // makeTabsSticky()
+
+				makeTabsSticky();
 		} );
 } )( jQuery );
 
